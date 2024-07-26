@@ -141,6 +141,21 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
     @Override
     public int delete(RentalCompany company)
     {
-        return 1;
+        int result = 0;
+        String sql = "DELETE FROM rental_company WHERE id = ?";
+
+        try(Connection conn = Database.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql))
+        {
+            ps.setInt(1, company.getId());
+
+            result = ps.executeUpdate();
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }
