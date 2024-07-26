@@ -58,7 +58,31 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
     @Override
     public List<RentalCompany> getAll()
     {
-        List<RentalCompany> companyList = null;
+        List<RentalCompany> companyList = new ArrayList<>();
+        String sql = "SELECT id, name, email, password, cnpj, city FROM rental_company";
+
+        try(Connection conn = Database.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql))
+        {
+            while(rs.next())
+            {
+                int companyId = rs.getInt("id");
+                String companyName = rs.getString("name");
+                String companyEmail = rs.getString("email");
+                String companyPassword = rs.getString("password");
+                String companyCnpj = rs.getString("cnpj");
+                String companyCity = rs.getString("city");
+                
+                RentalCompany company = new RentalCompany(companyId, companyName, companyEmail, companyPassword, companyCnpj, companyCity);
+
+                companyList.add(company);
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
 
         return companyList;
     }
