@@ -90,7 +90,26 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
     @Override
     public int insert(RentalCompany company)
     {
-        return 1;
+        int result = 0;
+        String sql = "INSERT INTO rental_company (name, email, password, cnpj, city) VALUES (?, ?, ?, ?, ?)";
+
+        try(Connection conn = Database.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql))
+        {
+            ps.setString(1, company.getName());
+            ps.setString(2, company.getEmail());
+            ps.setString(3, company.getPassword());
+            ps.setString(4, company.getCnpj());
+            ps.setString(5, company.getCity());
+
+            result = ps.executeUpdate();
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
     }
     
     @Override
