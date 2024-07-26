@@ -115,7 +115,27 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
     @Override
     public int update(RentalCompany company)
     {
-        return 1;
+        int result = 0;
+        String sql = "UPDATE rental_company SET name = ?, email = ?, password = ?, cnpj = ?, city = ? WHERE id = ?";
+
+        try(Connection conn = Database.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql))
+        {
+            ps.setString(1, company.getName());
+            ps.setString(2, company.getEmail());
+            ps.setString(3, company.getPassword());
+            ps.setString(4, company.getCnpj());
+            ps.setString(5, company.getCity());
+            ps.setInt(6, company.getId());
+
+            result = ps.executeUpdate();
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     @Override
