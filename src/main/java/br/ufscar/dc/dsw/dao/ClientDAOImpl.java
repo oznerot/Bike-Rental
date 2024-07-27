@@ -153,21 +153,48 @@ public class ClientDAOImpl implements ClientDAO
     public int update(Client client)
     {
         int result = 0;
-        String sql = "UPDATE client SET name = ?, email = ?, password = ?, cpf = ?, phone = ?, gender = ?, birth = ? WHERE uuid = ?";
+        String userSQL = "UPDATE user SET name = ?, email = ?, password = ? WHERE user_id = ?";
 
-        try(Connection conn = Database.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql))
+        String clientSQL = "UPDATE client SET cpf = ?, phone = ?, gender = ?, birth = ? WHERE client_id = ?";
+
+        try(Connection conn = Database.getConnection())
         {
-            ps.setString(1, client.getName());
-            ps.setString(2, client.getEmail());
-            ps.setString(3, client.getPassword());
-            ps.setString(4, client.getCpf());
-            ps.setString(5, client.getPhone());
-            ps.setString(6, client.getGender());
-            ps.setDate(7, Date.valueOf(client.getDateOfBirth()));
-            ps.setString(8, client.getUUID());
+            conn.setAutoCommit(false);
 
-            result = ps.executeUpdate();
+            try(PreparedStatement userPstmt = conn.prepareStatement(userSQL);
+                PreparedStatement clientPstmt = conn.prepareStatement(clientSQL))
+            {
+                userPstmt.setString(1, client.getName());
+                userPstmt.setString(2, client.getEmail());
+                userPstmt.setString(3, client.getPassword());
+                userPstmt.setString(4, client.getUUID());
+                result = userPstmt.executeUpdate();
+
+                clientPstmt.setString(1, client.getCpf());
+                clientPstmt.setString(2, client.getPhone());
+                clientPstmt.setString(3, client.getGender());
+                clientPstmt.setDate(4, Date.valueOf(client.getDateOfBirth()));
+                clientPstmt.setString(5, client.getUUID());
+                result = clientPstmt.executeUpdate();
+
+                conn.commit();
+            }
+            catch(SQLException e)
+            {
+                if(conn != null)
+                {
+                    try
+                    {
+                        conn.rollback();
+                    }
+                    catch(SQLException rollbackEx)
+                    {
+                        rollbackEx.printStackTrace();
+                    }
+                }
+
+                e.printStackTrace();
+            }
         }
         catch(SQLException e)
         {
@@ -181,7 +208,7 @@ public class ClientDAOImpl implements ClientDAO
     public int delete(Client client)
     {
         int result = 0;
-        String sql = "DELETE FROM client WHERE uuid = ?";
+        String sql = "DELETE FROM user WHERE user_id = ?";
 
         try(Connection conn = Database.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql))

@@ -68,19 +68,33 @@ public class Main
        int result = clientDAO.delete(client);
 
        System.out.println(result);
-       */
+
     
-        UserDAO userDAO = new UserDAOImpl();
+        ClientDAO clientDAO = new ClientDAOImpl();
 
-        User user = new User("adfdbc58-63a6-4e83-b0ff-eab698e2c566", "Vitor Bosta", "user6@example.com", "aaabbb", 1);
-        
-        int result = userDAO.update(user);
-        
-        System.out.println(user.getName());
+        Client client = clientDAO.get("1b2e7f6f-580e-41f2-9f20-dea753d397bd");
 
+        System.out.println(client.getName());
+
+        ClientDAO clientDAO = new ClientDAOImpl();
+
+        List<Client> clientList = clientDAO.getAll();
+
+        for(int i = 0; i < clientList.size(); i++)
+        {
+            System.out.println(clientList.get(i).getName());
+        }
         //int result = clientDAO.delete(client);
 
         //System.out.println(clientDAO.get("1aa605ff-7202-4e2a-86c4-7b036af25ef7").getName());
+        */
+        ClientDAO clientDAO = new ClientDAOImpl();
+        
+        Client client = new Client("23a60fc7-4fa5-4023-a143-dff2fac1a6f2", "Vitor Josta", "user6@example.com", "aaabbb", "12312312300", "xxxxxxxxxxx", "Female", LocalDate.of(2001, 4, 12));
+
+        int result = clientDAO.delete(client);
+
+        System.out.println(result);
 
     }   
 }
