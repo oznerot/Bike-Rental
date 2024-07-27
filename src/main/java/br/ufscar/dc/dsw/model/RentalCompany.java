@@ -9,9 +9,17 @@ public class RentalCompany extends User
 
     public RentalCompany() {}
 
-    public RentalCompany(int id, String name, String email, String password, String cnpj, String city)
+    public RentalCompany(String name, String email, String password, String cnpj, String city)
     {
-        super(id, name, email, password);
+        super(name, email, password);
+
+        this.cnpj = cnpj;
+        this.city = city;
+    }
+
+    public RentalCompany(String uuid, String name, String email, String password, String cnpj, String city)
+    {
+        super(uuid, name, email, password);
 
         this.cnpj = cnpj;
         this.city = city;

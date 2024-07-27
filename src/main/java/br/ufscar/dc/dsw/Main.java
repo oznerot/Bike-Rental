@@ -66,9 +66,16 @@ public class Main
 
        System.out.println(result);
        */
+    
+        ClientDAO clientDAO = new ClientDAOImpl();
 
-        RentalCompanyDAO companyDAO = new RentalCompanyDAOImpl();
-        RentalCompany company = companyDAO.get(1);
-        System.out.println(company.getName());
+        Client client = clientDAO.get("1aa605ff-7202-4e2a-86c4-7b036af25ef7");
+        
+        System.out.println(client.getName());
+
+        int result = clientDAO.delete(client);
+
+        System.out.println(clientDAO.get("1aa605ff-7202-4e2a-86c4-7b036af25ef7").getName());
+
     }   
 }

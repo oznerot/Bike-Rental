@@ -1,30 +1,37 @@
 package br.ufscar.dc.dsw.model;
 
+import java.util.UUID;
+
 public class User
 {
-    private int id;
+    private String uuid;
     private String email;
     private String password;
     private String name;
 
     public User() {}
 
-    public User (int id, String name, String email, String password)
+    //Used when signing up a new user
+    public User (String name, String email, String password)
     {
-        this.id = id;
+        this.uuid = UUID.randomUUID().toString();
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public void setId(int id)
+    //Used when retrieving user data from database
+    public User (String uuid, String name, String email, String password)
     {
-        this.id = id;
+        this.uuid = uuid;
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
 
-    public int getId()
+    public String getUUID()
     {
-        return id;
+        return uuid;
     }
 
     public void setEmail(String email)
