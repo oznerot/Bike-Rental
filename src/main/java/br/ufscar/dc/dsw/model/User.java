@@ -8,25 +8,28 @@ public class User
     private String email;
     private String password;
     private String name;
+    private int role;
 
     public User() {}
 
     //Used when signing up a new user
-    public User (String name, String email, String password)
+    public User (String name, String email, String password, int role)
     {
         this.uuid = UUID.randomUUID().toString();
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     //Used when retrieving user data from database
-    public User (String uuid, String name, String email, String password)
+    public User (String uuid, String name, String email, String password, int role)
     {
         this.uuid = uuid;
         this.name = name;
         this.email = email;
         this.password = password;
+        this.role = role;
     }
 
     public String getUUID()
@@ -62,5 +65,15 @@ public class User
     public String getName()
     {
         return name;
+    }
+
+    public void setRole(int role)
+    {
+        this.role = role;
+    }
+
+    public int getRole()
+    {
+        return role;
     }
 }

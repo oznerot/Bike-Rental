@@ -4,37 +4,37 @@ import java.time.LocalDateTime;
 
 public class Rental
 {
-    private String clientCpf;
-    private String rentalCompanyCnpj;
+    private String clientId;
+    private String rentalCompanyId;
     private LocalDateTime rentDateHour;
 
     public Rental() {}
 
-    public Rental(String clientCpf, String rentalCompanyCnpj, LocalDateTime rentDateHour)
+    public Rental(String clientId, String rentalCompanyId, LocalDateTime rentDateHour)
     {
-        this.clientCpf = clientCpf;
-        this.rentalCompanyCnpj = rentalCompanyCnpj;
+        this.clientId = clientId;
+        this.rentalCompanyId = rentalCompanyId;
         this.rentDateHour = rentDateHour;
     }
 
-    public void setClientCpf(String clientCpf)
+    public void setClientId(String clientId)
     {
-        this.clientCpf = clientCpf;
+        this.clientId = clientId;
     }
 
-    public String getClientCpf()
+    public String getClientId()
     {
-        return clientCpf;
+        return clientId;
     }
 
-    public void setRentalCompanyCnpj(String rentalCompanyCnpj)
+    public void setRentalCompanyId(String rentalCompanyId)
     {
-        this.rentalCompanyCnpj = rentalCompanyCnpj;
+        this.rentalCompanyId = rentalCompanyId;
     }
 
-    public String getRentalCompanyCnpj()
+    public String getRentalCompanyId()
     {
-        return rentalCompanyCnpj;
+        return rentalCompanyId;
     }
 
     public void setRentDateHour(LocalDateTime rentDateHour)

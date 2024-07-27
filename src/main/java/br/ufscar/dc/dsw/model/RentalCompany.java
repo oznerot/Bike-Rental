@@ -11,7 +11,7 @@ public class RentalCompany extends User
 
     public RentalCompany(String name, String email, String password, String cnpj, String city)
     {
-        super(name, email, password);
+        super(name, email, password, 2);
 
         this.cnpj = cnpj;
         this.city = city;
@@ -19,7 +19,7 @@ public class RentalCompany extends User
 
     public RentalCompany(String uuid, String name, String email, String password, String cnpj, String city)
     {
-        super(uuid, name, email, password);
+        super(uuid, name, email, password, 2);
 
         this.cnpj = cnpj;
         this.city = city;

@@ -13,7 +13,7 @@ public class Client extends User
 
     public Client (String name, String email, String password, String cpf, String phone, String gender, LocalDate dateOfBirth)
     {
-        super(name, email, password);
+        super(name, email, password, 1);
 
         this.cpf = cpf;
         this.phone = phone;
@@ -23,7 +23,7 @@ public class Client extends User
 
     public Client (String uuid, String name, String email, String password, String cpf, String phone, String gender, LocalDate dateOfBirth)
     {
-        super(uuid, name, email, password);
+        super(uuid, name, email, password, 1);
 
         this.cpf = cpf;
         this.phone = phone;

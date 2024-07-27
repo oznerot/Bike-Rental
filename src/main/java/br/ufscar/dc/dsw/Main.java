@@ -12,8 +12,11 @@ import br.ufscar.dc.dsw.dao.ClientDAO;
 import br.ufscar.dc.dsw.dao.ClientDAOImpl;
 import br.ufscar.dc.dsw.dao.RentalCompanyDAO;
 import br.ufscar.dc.dsw.dao.RentalCompanyDAOImpl;
+import br.ufscar.dc.dsw.dao.UserDAO;
+import br.ufscar.dc.dsw.dao.UserDAOImpl;
 import br.ufscar.dc.dsw.model.Client;
 import br.ufscar.dc.dsw.model.RentalCompany;
+import br.ufscar.dc.dsw.model.User;
 
 public class Main
 {
@@ -67,15 +70,17 @@ public class Main
        System.out.println(result);
        */
     
-        ClientDAO clientDAO = new ClientDAOImpl();
+        UserDAO userDAO = new UserDAOImpl();
 
-        Client client = clientDAO.get("1aa605ff-7202-4e2a-86c4-7b036af25ef7");
+        User user = new User("adfdbc58-63a6-4e83-b0ff-eab698e2c566", "Vitor Bosta", "user6@example.com", "aaabbb", 1);
         
-        System.out.println(client.getName());
+        int result = userDAO.update(user);
+        
+        System.out.println(user.getName());
 
-        int result = clientDAO.delete(client);
+        //int result = clientDAO.delete(client);
 
-        System.out.println(clientDAO.get("1aa605ff-7202-4e2a-86c4-7b036af25ef7").getName());
+        //System.out.println(clientDAO.get("1aa605ff-7202-4e2a-86c4-7b036af25ef7").getName());
 
     }   
 }
