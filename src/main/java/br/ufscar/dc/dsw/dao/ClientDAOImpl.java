@@ -24,7 +24,7 @@ public class ClientDAOImpl implements ClientDAO
     public Client get(String uuid)
     {
         Client client = null;
-        String sql = "SELECT uuid, name, email, password, cpf, phone, gender, birth FROM client WHERE uuid = ?";
+        String sql = "SELECT c.*, u.name, u.email, u.password FROM client c JOIN user u ON c.client_id = u.user_id WHERE client_id = ?";
 
         //Here I'm using try-with-resources statement to let the Automatic Resource Management close
         //Connection, preparedStatement and ResultSet objects for me so I don't mess things up.
@@ -37,7 +37,7 @@ public class ClientDAOImpl implements ClientDAO
             {
                 if(rs.next())
                 {
-                    String clientUUID = rs.getString("uuid");
+                    String clientUUID = rs.getString("client_id");
                     String clientName = rs.getString("name");
                     String clientEmail = rs.getString("email");
                     String clientPassword = rs.getString("password");
@@ -62,7 +62,7 @@ public class ClientDAOImpl implements ClientDAO
     public List<Client> getAll()
     {
         List<Client> clientList = new ArrayList<>();
-        String sql = "SELECT uuid, name, email, password, cpf, phone, gender, birth FROM client";
+        String sql = "SELECT c.*, u.name, u.email, u.password FROM client c JOIN user u ON c.client_id = u.user_id";
 
         try(Connection conn = Database.getConnection();
             Statement stmt = conn.createStatement();
@@ -70,7 +70,7 @@ public class ClientDAOImpl implements ClientDAO
         {
             while(rs.next())
             {
-                String clientUUID = rs.getString("uuid");
+                String clientUUID = rs.getString("client_id");
                 String clientName = rs.getString("name");
                 String clientEmail = rs.getString("email");
                 String clientPassword = rs.getString("password");
@@ -96,21 +96,50 @@ public class ClientDAOImpl implements ClientDAO
     public int insert(Client client)
     {
         int result = 0;
-        String sql = "INSERT INTO client (uuid, name, email, password, cpf, phone, gender, birth) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String userSQL = "INSERT INTO user (user_id, name, email, password, user_role) VALUES (?, ?, ?, ?, " +
+                            "(SELECT role_id FROM roles WHERE role_name = 'client'))";
 
-        try(Connection conn = Database.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql))
+        String clientSQL = "INSERT INTO client (client_id, cpf, phone, gender, birth) VALUES (?, ?, ?, ?, ?)";
+
+        try(Connection conn = Database.getConnection())
         {
-            ps.setString(1, client.getUUID());
-            ps.setString(2, client.getName());
-            ps.setString(3, client.getEmail());
-            ps.setString(4, client.getPassword());
-            ps.setString(5, client.getCpf());
-            ps.setString(6, client.getPhone());
-            ps.setString(7, client.getGender());
-            ps.setDate(8, Date.valueOf(client.getDateOfBirth()));
+            try(PreparedStatement userPstmt = conn.prepareStatement(userSQL);
+                PreparedStatement clientPstmt = conn.prepareStatement(clientSQL))
+            {
+                conn.setAutoCommit(false);
 
-            result = ps.executeUpdate();
+                userPstmt.setString(1, client.getUUID());
+                userPstmt.setString(2, client.getName());
+                userPstmt.setString(3, client.getEmail());
+                userPstmt.setString(4, client.getPassword());
+                result = userPstmt.executeUpdate();
+
+                clientPstmt.setString(1, client.getUUID());
+                clientPstmt.setString(2, client.getCpf());
+                clientPstmt.setString(3, client.getPhone());
+                clientPstmt.setString(4, client.getGender());
+                clientPstmt.setDate(5, Date.valueOf(client.getDateOfBirth()));
+
+                result = clientPstmt.executeUpdate();
+
+                conn.commit();
+            }
+            catch(SQLException e)
+            {
+                if(conn != null)
+                {
+                    try
+                    {
+                        conn.rollback();
+                    }
+                    catch(SQLException rollbackEx)
+                    {
+                        rollbackEx.printStackTrace();
+                    }
+                }
+
+                e.printStackTrace();
+            }
         }
         catch(SQLException e)
         {
