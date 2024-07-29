@@ -25,7 +25,7 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
         String sql = "SELECT rc.*, u.name, u.email, u.password " +
                      "FROM rental_company rc " +
                      "JOIN user u ON rc.company_id = u.user_id " +
-                     "WHERE company_id = ?"
+                     "WHERE company_id = ?";
         
         try(Connection conn = Database.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql))
@@ -61,7 +61,7 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
         String sql = "SELECT rc.*, u.name u.email, u.password " +
                      "FROM rental_company rc " +
                      "JOIN user u ON rc.company_id = u.user_id" +
-                     "WHERE city = ?"
+                     "WHERE city = ?";
         
         try(Connection conn = Database.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql))
@@ -188,7 +188,7 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
         String userSQL = "UPDATE user SET name = ?, email = ?, password = ? " +
                          "WHERE user_id = ?";
         
-        String companySQL = "UPDATE company SET cnpj = ?, city = ? " +
+        String companySQL = "UPDATE rental_company SET cnpj = ?, city = ? " +
                             "WHERE company_id = ?";
         
         try(Connection conn = Database.getConnection())
@@ -196,7 +196,7 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
             conn.setAutoCommit(false);
 
             try(PreparedStatement userPstmt = conn.prepareStatement(userSQL);
-                PreparedStatement companySQL = conn.prepareStatement(companySQL))
+                PreparedStatement companyPstmt = conn.prepareStatement(companySQL))
             {
                 userPstmt.setString(1, company.getName());
                 userPstmt.setString(2, company.getEmail());
@@ -207,7 +207,7 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
                 companyPstmt.setString(1, company.getCnpj());
                 companyPstmt.setString(2, company.getCity());
                 companyPstmt.setString(3, company.getUUID());
-                result = clientPstmt.executeUpdate();
+                result = companyPstmt.executeUpdate();
 
                 conn.commit();
             }
