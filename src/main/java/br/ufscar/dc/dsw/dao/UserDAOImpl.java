@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 import br.ufscar.dc.dsw.dao.UserDAO;
 import br.ufscar.dc.dsw.model.User;
-import br.ufscar.dc.dsw.Database;
+import br.ufscar.dc.dsw.connection.Database;
 
 public class UserDAOImpl implements UserDAO
 {

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 import br.ufscar.dc.dsw.dao.BikeRentalDAO;
 import br.ufscar.dc.dsw.model.BikeRental;
-import br.ufscar.dc.dsw.Database;
+import br.ufscar.dc.dsw.connection.Database;
 
 public class BikeRentalDAOImpl implements BikeRentalDAO
 {
