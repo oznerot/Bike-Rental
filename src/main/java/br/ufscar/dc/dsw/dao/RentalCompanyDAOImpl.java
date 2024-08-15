@@ -58,9 +58,9 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
     public List<RentalCompany> getByCity(String city)
     {
         List<RentalCompany> companyList = new ArrayList<>();
-        String sql = "SELECT rc.*, u.name u.email, u.password " +
+        String sql = "SELECT rc.*, u.name, u.email, u.password " +
                      "FROM rental_company rc " +
-                     "JOIN user u ON rc.company_id = u.user_id" +
+                     "JOIN user u ON rc.company_id = u.user_id " +
                      "WHERE city = ?";
         
         try(Connection conn = Database.getConnection();

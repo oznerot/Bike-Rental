@@ -8,8 +8,19 @@
     <title>Bike Rental</title>
 </head>
 <body>
+	<a href="login">
+		<button type="button">Login</button>
+	</a>
+
 	<h1>Rental Companies</h1>
-	<table border="1" style="width: 400px; border: 1px solid black">
+
+	<form action="home" method="get">
+		<label for="city">Filter by City</label>
+		<input type="text" id="city" name="city" value="${param.city}">
+		<button type="submit">Filter</button>
+	</form>
+
+	<table border="1" style="width: 1000px; border: 1px solid black">
 		<thead>
 			<tr>
 				<th>Name</th>

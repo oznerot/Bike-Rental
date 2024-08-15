@@ -22,11 +22,22 @@ import java.io.FileWriter;
 public class RentalCompanyServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
-        
+
+    RentalCompanyDAO companyDAO = new RentalCompanyDAOImpl();
+
     protected void processRequest(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
     {
         response.setContentType("text/html;charset=UTF-8");
-        listCompanies(request, response);
+
+        String cityName = request.getParameter("city");
+        if(cityName != null && !cityName.trim().isEmpty())
+        {
+            listCompaniesByCity(request, response);
+        }
+        else
+        {
+            listCompanies(request, response);
+        }
     }
             
     @Override
@@ -41,26 +52,21 @@ public class RentalCompanyServlet extends HttpServlet
 
     private void listCompanies(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        RentalCompanyDAO companyDAO = new RentalCompanyDAOImpl();
         List<RentalCompany> rentalCompanies = companyDAO.getAll();
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AloMundo</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Alô Mundo</h1>");
-            out.println(rentalCompanies.size());
-            for (int i = 0; i < rentalCompanies.size(); i++) {
-                out.println("<h1>Alô Mundo</h1>");
-            }
-            out.println("</body>");
-            out.println("</html>");
-        }
+
         request.setAttribute("companiesList", rentalCompanies);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/rentalCompanies.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/homePage.jsp");
         dispatcher.forward(request, response);
     }
 
+    private void listCompaniesByCity(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        String cityName = request.getParameter("city");
+
+        List<RentalCompany> rentalCompanies = companyDAO.getByCity(cityName);
+
+        request.setAttribute("companiesList", rentalCompanies);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/homePage.jsp");
+        dispatcher.forward(request, response);
+    }
 }

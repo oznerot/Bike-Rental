@@ -1,6 +1,6 @@
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/model/User.java
-/home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/controller/HomeServlet.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/connection/Database.java
+/home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/controller/LoginServlet.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/ClientDAOImpl.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/BikeRentalDAOImpl.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/RentalCompanyDAOImpl.java

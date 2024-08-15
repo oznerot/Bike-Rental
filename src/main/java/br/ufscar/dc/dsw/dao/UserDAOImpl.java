@@ -21,17 +21,17 @@ public class UserDAOImpl implements UserDAO
 
     //CRUD - Read
     @Override
-    public User get(String uuid)
+    public User get(String email)
     {
         User user = null;
-        String sql = "SELECT user_id, name, email, password, user_role FROM user WHERE user_id = ?";
+        String sql = "SELECT user_id, name, email, password, user_role FROM user WHERE email = ?";
 
         //Here I'm using try-with-resources statement to let the Automatic Resource Management close
         //Connection, preparedStatement and ResultSet objects for me so I don't mess things up.
         try(Connection conn = Database.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql))
         {
-            ps.setString(1, uuid);
+            ps.setString(1, email);
 
             try(ResultSet rs = ps.executeQuery())
             {

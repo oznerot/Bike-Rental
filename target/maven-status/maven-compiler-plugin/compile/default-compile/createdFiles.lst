@@ -1,5 +1,5 @@
+br/ufscar/dc/dsw/controller/LoginServlet.class
 br/ufscar/dc/dsw/connection/Database.class
-br/ufscar/dc/dsw/controller/HomeServlet.class
 br/ufscar/dc/dsw/dao/BikeRentalDAOImpl.class
 br/ufscar/dc/dsw/model/RentalCompany.class
 br/ufscar/dc/dsw/model/BikeRental.class

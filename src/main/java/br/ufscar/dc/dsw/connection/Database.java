@@ -13,7 +13,22 @@ public class Database
     private static String user = "root";
     private static String password = "admin123";
 
-    private Database() {}
+    private Database()
+    {
+        try
+        {
+        	/* Setup Banco de dados Derby */
+        	
+        	// Class.forName("org.apache.derby.jdbc.ClientDriver");
+            
+        	/* Setup Banco de dados MySQL */
+        	
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        	
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static Connection getConnection() throws SQLException
     {
