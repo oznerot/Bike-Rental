@@ -1,4 +1,4 @@
-package br.ufscar.dc.dsw;
+package br.ufscar.dc.dsw.connection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

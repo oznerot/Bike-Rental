@@ -94,11 +94,14 @@ public class Main
 
         //System.out.println(clientDAO.get("1aa605ff-7202-4e2a-86c4-7b036af25ef7").getName());
         */
-        BikeRentalDAO brDAO = new BikeRentalDAOImpl();
-        
-        BikeRental br = new BikeRental("4e7f20be-c986-4709-a445-27a9659519d3", "b78aeae8-c0ab-48cf-9e01-d68a7e4829a1", "eb67bced-b73a-4d7f-ba10-1418cc3f9578", LocalDateTime.of(2024, 07, 27, 10, 00));
+        RentalCompanyDAO RentalCompanyDAO = new RentalCompanyDAOImpl();
 
-        int result = brDAO.update(br);
+        List<RentalCompany> RentalCompanyList = RentalCompanyDAO.getAll();
+
+        for(int i = 0; i < RentalCompanyList.size(); i++)
+        {
+            System.out.println(RentalCompanyList.get(i).getName());
+        }
 
     }   
 }

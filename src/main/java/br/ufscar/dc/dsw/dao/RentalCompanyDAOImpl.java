@@ -97,7 +97,7 @@ public class RentalCompanyDAOImpl implements RentalCompanyDAO
     public List<RentalCompany> getAll()
     {
         List<RentalCompany> companyList = new ArrayList<>();
-        String sql = "SELECT rc.*, u.name u.email, u.password " +
+        String sql = "SELECT rc.*, u.name, u.email, u.password " +
                      "FROM rental_company rc " +
                      "JOIN user u ON rc.company_id = u.user_id";
         

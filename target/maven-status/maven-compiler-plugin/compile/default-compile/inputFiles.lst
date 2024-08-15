@@ -1,7 +1,6 @@
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/model/User.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/controller/HomeServlet.java
-/home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/controller/ClientServlet.java
-/home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/Database.java
+/home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/connection/Database.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/ClientDAOImpl.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/BikeRentalDAOImpl.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/RentalCompanyDAOImpl.java
@@ -10,7 +9,6 @@
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/UserDAO.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/controller/RentalCompanyServlet.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/model/Client.java
-/home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/controller/AdminServlet.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/GenericDAO.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/BikeRentalDAO.java
 /home/vitorenzo/Projects/Java/Bike-Rental/src/main/java/br/ufscar/dc/dsw/dao/ClientDAO.java
