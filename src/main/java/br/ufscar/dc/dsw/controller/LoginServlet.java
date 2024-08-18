@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import br.ufscar.dc.dsw.dao.UserDAO;
 import br.ufscar.dc.dsw.dao.UserDAOImpl;
+import br.ufscar.dc.dsw.model.User;
 
 @WebServlet(urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet
@@ -21,24 +22,68 @@ public class LoginServlet extends HttpServlet
     private static final long serialVersionUID = 1L;
 
     UserDAO userDAO = new UserDAOImpl();
-
-    protected void processRequest(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
+            
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
         response.setContentType("text/html;charset=UTF-8");
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+        String page = "";
+        String action = request.getParameter("action");
+
+
+        if(action == null)
+        {
+            action = "";
+        }
+
+        switch(action){           
+            case "register":
+                page = "registerPage.jsp";
+            
+            default:
+                page = "loginPage.jsp";
+                break;     
+        }
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher(page);
         dispatcher.forward(request, response);
+
     }
             
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
         response.setContentType("text/html;charset=UTF-8");
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
-        dispatcher.forward(request, response);
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        User user = userDAO.getByEmail(email);
+        if(user != null)
+        {
+            if(doPasswordMatch(user, password))
+            {
+                logInSession(user, request, response);
+            }
+        }
+
     }
-            
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    //Using this so in the future if i want to use salting to match password
+    private boolean doPasswordMatch(User user, String password)
+    {
+        return user.getPassword().equals(password);
+    }
+
+    private void logInSession(User user, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        request.getSession().setAttribute("userLogged", user);
+        String contextPath = request.getContextPath();
+        request.getSession().setAttribute("contextPath", contextPath);
+
+        System.out.println(contextPath);
+
+        response.sendRedirect(contextPath + "/");
     }
 }

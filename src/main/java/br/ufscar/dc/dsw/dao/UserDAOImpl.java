@@ -21,17 +21,17 @@ public class UserDAOImpl implements UserDAO
 
     //CRUD - Read
     @Override
-    public User get(String email)
+    public User get(String uuid)
     {
         User user = null;
-        String sql = "SELECT user_id, name, email, password, user_role FROM user WHERE email = ?";
+        String sql = "SELECT user_id, name, email, password, user_role FROM user WHERE user_id = ?";
 
         //Here I'm using try-with-resources statement to let the Automatic Resource Management close
         //Connection, preparedStatement and ResultSet objects for me so I don't mess things up.
         try(Connection conn = Database.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql))
         {
-            ps.setString(1, email);
+            ps.setString(1, uuid);
 
             try(ResultSet rs = ps.executeQuery())
             {
@@ -84,6 +84,41 @@ public class UserDAOImpl implements UserDAO
         }
 
         return userList;
+    }
+
+    @Override
+    public User getByEmail(String email)
+    {
+        User user = null;
+        String sql = "SELECT user_id, name, email, password, user_role FROM user WHERE email = ?";
+
+        //Here I'm using try-with-resources statement to let the Automatic Resource Management close
+        //Connection, preparedStatement and ResultSet objects for me so I don't mess things up.
+        try(Connection conn = Database.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql))
+        {
+            ps.setString(1, email);
+
+            try(ResultSet rs = ps.executeQuery())
+            {
+                if(rs.next())
+                {
+                    String userUUID = rs.getString("user_id");
+                    String userName = rs.getString("name");
+                    String userEmail = rs.getString("email");
+                    String userPassword = rs.getString("password");
+                    int userRole = rs.getInt("user_role");
+
+                    user = new User(userUUID, userName, userEmail, userPassword, userRole);
+                }
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return user;
     }
 
     @Override

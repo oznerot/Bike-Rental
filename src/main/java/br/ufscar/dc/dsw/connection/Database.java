@@ -16,16 +16,11 @@ public class Database
     private Database()
     {
         try
+        {   	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        }
+        catch(ClassNotFoundException e)
         {
-        	/* Setup Banco de dados Derby */
-        	
-        	// Class.forName("org.apache.derby.jdbc.ClientDriver");
-            
-        	/* Setup Banco de dados MySQL */
-        	
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        	
-        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -38,51 +33,4 @@ public class Database
         return connection;
     }
 
-    public static void closeConnection(Connection connection)
-    {
-        try 
-        {
-            connection.close();
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public static void closeStatement(Statement statement)
-    {
-        try
-        {
-            statement.close();
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public static void closePreparedStatement(PreparedStatement preparedStatement)
-    {
-        try
-        {
-            preparedStatement.close();
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public static void closeResultSet(ResultSet resultSet)
-    {
-        try
-        {
-            resultSet.close();
-        }
-        catch(SQLException e)
-        {
-            e.printStackTrace();
-        }
-    }
 }
