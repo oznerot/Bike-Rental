@@ -1,21 +1,19 @@
 package br.ufscar.dc.dsw.model;
 
-import java.util.UUID;
-
 public class User
 {
-    private String uuid;
+    private int id;
     private String email;
     private String password;
     private String name;
-    private int role;
+    private String role;
 
     public User() {}
 
     //Used when signing up a new user
-    public User (String name, String email, String password, int role)
+    public User (String name, String email, String password, String role)
     {
-        this.uuid = UUID.randomUUID().toString();
+        this.id = -1;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -23,18 +21,18 @@ public class User
     }
 
     //Used when retrieving user data from database
-    public User (String uuid, String name, String email, String password, int role)
+    public User (int id, String name, String email, String password, String role)
     {
-        this.uuid = uuid;
+        this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
     }
 
-    public String getUUID()
+    public int getId()
     {
-        return uuid;
+        return id;
     }
 
     public void setEmail(String email)
@@ -67,12 +65,12 @@ public class User
         return name;
     }
 
-    public void setRole(int role)
+    public void setRole(String role)
     {
         this.role = role;
     }
 
-    public int getRole()
+    public String getRole()
     {
         return role;
     }

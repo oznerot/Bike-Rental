@@ -14,153 +14,179 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.ufscar.dc.dsw.dao.ClientDAO;
-import br.ufscar.dc.dsw.dao.ClientDAOImpl;
-import br.ufscar.dc.dsw.dao.RentalCompanyDAO;
-import br.ufscar.dc.dsw.dao.RentalCompanyDAOImpl;
+import br.ufscar.dc.dsw.dao.UserDAO;
 import br.ufscar.dc.dsw.model.Client;
-import br.ufscar.dc.dsw.model.RentalCompany;
+import br.ufscar.dc.dsw.model.User;
+import br.ufscar.dc.dsw.util.Erro;
 
-@WebServlet(urlPatterns = {"/client"})
+@WebServlet(urlPatterns = {"/clients/*"})
 public class ClientServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
 
-    ClientDAO clientDAO = new ClientDAOImpl();
+    ClientDAO dao;
+    UserDAO userDao;
 
-    protected void processRequest(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
+    @Override
+    public void init() throws ServletException
     {
-        response.setContentType("text/html;charset=UTF-8");
+        super.init();
 
-        String action = request.getParameter("action");
+        this.dao = new ClientDAO();
+        this.userDao = new UserDAO();
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        doGet(request, response);
+    }
+            
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        User user = (User) request.getSession().getAttribute("userLogged");
+        Erro erros = new Erro();
+
+        if(user == null)
+        {
+            response.sendRedirect(request.getContextPath());
+            return;
+        }
+        else if(!user.getRole().equals("ADMIN"))
+        {
+            erros.add("Acesso não autorizado!");
+            erros.add("Apenas Administradores têm acesso a essa página");
+            request.setAttribute("mensagens", erros);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/user/noAuth.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
+
+        String action = request.getPathInfo();
+
         if(action == null)
         {
             action = "";
         }
 
-        switch (action) {
-            case "register":
-                registerClient(request, response);
-                break;
-
-            case "list":
-                listClients(request, response);
-                break;
-
-            
-            case "delete":
-                deleteClient(request, response);
-                break;
-
-            case "edit":
-                editClient(request, response);
-                break;
-               
-
-            case "add":
-                addClient(request, response);
-                break;
-        
-
-            default:
-                RequestDispatcher dispatcher = request.getRequestDispatcher("indexPage.jsp");
-                dispatcher.forward(request, response); 
+        try
+        {
+            switch(action)
+            {
+                case "/register":
+                    showFormRegister(request, response);
+                    break;
+                
+                case "/add":
+                    insert(request, response);
+                    break;
+                
+                case "/delete":
+                    remove(request, response);
+                    break;
+                
+                case "/edit":
+                    showFormEdit(request, response);
+                    break;
+                
+                case "/update":
+                    update(request, response);
+                    break;
+                
+                default:
+                    System.out.println("CAIU AQUI NA LISTAGEM");
+                    list(request, response);
+                    break;
+                
+            }
         }
-      
-
+        catch(RuntimeException | IOException | ServletException e)
+        {
+            e.printStackTrace();
+        }
     }
             
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-                    processRequest(request, response);
-    }
-            
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-                    processRequest(request, response);
-    }
-
-    private void registerClient(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    private void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String clientId = request.getParameter("id");
-        Client client = new Client();
-        boolean edit = false;
+        List<Client> clients = dao.getAll();
+        request.setAttribute("clients", clients);
 
-        // If a client ID is present, it means we're editing an existing client
-        if (clientId != null && !clientId.isEmpty()) {
-            client = clientDAO.get(clientId);
-            edit = true;
-        }
-        // No client ID means we're adding a new client
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/client/list.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void showFormRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/client/forms.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void showFormEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        Client client = dao.getById(id);
         request.setAttribute("client", client);
-        request.setAttribute("edit", edit);
 
-        // Forward to the register page
-        RequestDispatcher dispatcher = request.getRequestDispatcher("registerPage.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/client/forms.jsp");
         dispatcher.forward(request, response);
     }
 
-    private void listClients(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    private void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        List<Client> clients = clientDAO.getAll();
+        request.setCharacterEncoding("UTF-8");
 
-        request.setAttribute("clientsList", clients);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-        dispatcher.forward(request, response);
-    }
-
-    private void deleteClient(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {
-        String uuid = request.getParameter("id");
-        Client client = clientDAO.get(uuid);
-
-        int result = clientDAO.delete(client);
-
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/");
-    }
-
-    private void editClient(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {
-        String uuid = request.getParameter("id");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String cpf = request.getParameter("cpf");
         String phone = request.getParameter("phone");
         String gender = request.getParameter("gender");
-        String dateOfBirth = request.getParameter("birthday");
+        LocalDate dateOfBirth = LocalDate.parse(request.getParameter("birthday"));
 
-        Client client = clientDAO.get(uuid);
+        Client client = new Client(name, email, password, cpf, phone, gender, dateOfBirth);
+        Erro erro = new Erro();
 
-        client.setName(name);
-        client.setEmail(email);
-        client.setPassword(password);
-        client.setCpf(cpf);
-        client.setPhone(phone);
-        client.setGender(gender);
-        client.setDateOfBirth(LocalDate.parse(dateOfBirth));
+        if(userDao.getByEmail(client.getEmail()) != null)
+        {
+             erro.add("O Email inserido já está em uso");
+             request.setAttribute("mensagens", erro.getErros());
+             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/client/forms.jsp");
+             dispatcher.forward(request, response);
+             return;
+        }
 
-        int result = clientDAO.update(client);
-
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/");
+        dao.insert(client);
+        response.sendRedirect("list");
     }
 
-    private void addClient(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        request.setCharacterEncoding("UTF-8");
+
+        int id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String cpf = request.getParameter("cpf");
         String phone = request.getParameter("phone");
         String gender = request.getParameter("gender");
-        String dateOfBirth = request.getParameter("birthday");
+        LocalDate dateOfBirth = LocalDate.parse(request.getParameter("birthday"));
 
-        Client client = new Client(name, email, password, cpf, phone, gender, LocalDate.parse(dateOfBirth));
+        Client client = new Client(id, name, email, password, cpf, phone, gender, dateOfBirth);
 
-        int result = clientDAO.insert(client);
+        dao.update(client);
+        response.sendRedirect("list");
+    }
 
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/");
+    private void remove(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        Client client = dao.getById(id);
+
+        dao.delete(client);
+
+        response.sendRedirect("list");
     }
 }

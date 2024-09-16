@@ -12,162 +12,168 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.ufscar.dc.dsw.dao.RentalCompanyDAO;
-import br.ufscar.dc.dsw.dao.RentalCompanyDAOImpl;
+import br.ufscar.dc.dsw.dao.UserDAO;
 import br.ufscar.dc.dsw.model.RentalCompany;
+import br.ufscar.dc.dsw.model.User;
 
-@WebServlet(urlPatterns = {"/company"})
+import br.ufscar.dc.dsw.util.Erro;
+
+@WebServlet(urlPatterns = {"/companies/*"})
 public class CompanyServlet extends HttpServlet
 {
     private static final long serialVersionUID = 1L;
 
-    RentalCompanyDAO companyDAO = new RentalCompanyDAOImpl();
+    private RentalCompanyDAO dao;
+    private UserDAO userDao;
 
-    protected void processRequest(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException
+    @Override
+    public void init() throws ServletException
     {
-        response.setContentType("text/html;charset=UTF-8");
+        super.init();
 
-        String action = request.getParameter("action");
+        this.dao = new RentalCompanyDAO();
+        this.userDao = new UserDAO();
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        User user = (User) request.getSession().getAttribute("userLogged");
+        Erro erros = new Erro();
+        String action = request.getPathInfo();
 
         if(action == null)
         {
             action = "";
         }
 
-        switch (action) {
-            case "register":
-                registerCompany(request, response);
-                break;
-
-            case "list":
-                listCompanies(request, response);
-                break;
-
-            case "listByCity":
-                String cityName = request.getParameter("city");
-                if(cityName != null && !cityName.trim().isEmpty())
-                {
-                    listCompaniesByCity(request, response);
-                }
-                else
-                {
-                    listCompanies(request, response);
-                }
-                break;
+        if(action.equals("/list") || action.equals(""))
+        {
+            if(user != null && user.getRole().equals("ADMIN"))
+            {
+                adminList(request, response);
+            }
+            String city = request.getParameter("city");
             
-            case "delete":
-                deleteCompany(request, response);
-                break;
+            if(city == null || city.trim().isEmpty())
+            {
+                list(request, response);
+            }
+            else
+            {
+                listByCity(request, response);
+            }
 
-            case "edit":
-                editCompany(request, response);
-                break;
-               
+            return;
+        }
 
-            case "add":
-                addCompany(request, response);
-                break;
+        if(user == null)
+        {
+            response.sendRedirect(request.getContextPath());
+            return;
+        }
+        else if(!user.getRole().equals("ADMIN"))
+        {
+            erros.add("Acesso não autorizado!");
+            erros.add("Apenas Administradores têm acesso à essa página");
+            request.setAttribute("mensagens", erros);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/user/noAuth.jsp");
+            dispatcher.forward(request, response);
+
+            return;
+        }
+
+        try
+        {
+            switch(action)
+            {
+                case "/register":
+                    showFormRegister(request, response);
+                    break;
+                
+                case "/add":
+                    insert(request, response);
+                    break;
+                
+                case "/delete":
+                    remove(request, response);
+                    break;
+                
+                case "/edit":
+                    showFormEdit(request, response);
+                    break;
+                
+                case "/update":
+                    update(request, response);
+                    break;
+                
+                default:
+                    break;
+                
+            }
+        }
+        catch(RuntimeException | IOException | ServletException e)
+        {
+            e.printStackTrace();
+        }
         
-
-            default:
-                RequestDispatcher dispatcher = request.getRequestDispatcher("indexPage.jsp");
-                dispatcher.forward(request, response); 
-        }
-      
-
     }
-            
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-                    processRequest(request, response);
-    }
-            
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-                    processRequest(request, response);
-    }
-
-    private void registerCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String companyId = request.getParameter("id");
-        RentalCompany company = new RentalCompany();
-        boolean edit = false;
+        doGet(request, response);
+    }
 
-        // If a client ID is present, it means we're editing an existing client
-        if (companyId != null && !companyId.isEmpty()) {
-            company = companyDAO.get(companyId);
-            edit = true;
-        }
-        // No client ID means we're adding a new client
-        request.setAttribute("company", company);
-        request.setAttribute("edit", edit);
+    private void adminList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        List<RentalCompany> companies = dao.getAll();
+        request.setAttribute("companies", companies);
 
-        // Forward to the register page
-        RequestDispatcher dispatcher = request.getRequestDispatcher("registerPage.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/company/list.jsp");
         dispatcher.forward(request, response);
     }
 
-    private void listCompanies(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    private void list(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        List<RentalCompany> companies = companyDAO.getAll();
+        List<RentalCompany> companies = dao.getAll();
+        request.setAttribute("companies", companies);
 
-        request.setAttribute("companiesList", companies);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/company/list.jsp");
         dispatcher.forward(request, response);
     }
 
-    private void listCompaniesByCity(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    private void listByCity(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
-        String cityName = request.getParameter("city");
-
-        List<RentalCompany> companies = companyDAO.getByCity(cityName);
-
-        request.setAttribute("companiesList", companies);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
-        dispatcher.forward(request, response);
-    }
-
-    private void deleteCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {   
-        String uuid = request.getParameter("id");
-        RentalCompany company = companyDAO.get(uuid);
-
-        int result = companyDAO.delete(company);
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/");
-    }
-
-    private void editCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-    {
-        String uuid = request.getParameter("id");
-        String name = request.getParameter("name");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String cnpj = request.getParameter("cnpj");
         String city = request.getParameter("city");
+        List<RentalCompany> companies = dao.getByCity(city);
+        request.setAttribute("companies", companies);
 
-        RentalCompany company = companyDAO.get(uuid);
-
-        System.out.println("UUID: " + uuid);
-        System.out.println("Nome:" + name);
-        System.out.println("Email:" + email);
-        System.out.println("Senha:" + password);
-        System.out.println("CNPJ: " + cnpj);
-        System.out.println("Cidade: " + city);
-
-        company.setName(name);
-        company.setEmail(email);
-        company.setPassword(password);
-        company.setCnpj(cnpj);
-        company.setCity(city);
-
-        int result = companyDAO.update(company);
-
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/company/list.jsp");
+        dispatcher.forward(request, response);
     }
 
-    private void addCompany(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    private void showFormRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
     {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/company/forms.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void showFormEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        RentalCompany company = dao.getById(id);
+        request.setAttribute("company", company);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/company/forms.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    private void insert(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        request.setCharacterEncoding("UTF-8");
+
         String name = request.getParameter("name");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -175,10 +181,46 @@ public class CompanyServlet extends HttpServlet
         String city = request.getParameter("city");
 
         RentalCompany company = new RentalCompany(name, email, password, cnpj, city);
+        Erro erro = new Erro();
 
-        int result = companyDAO.insert(company);
+        if(userDao.getByEmail(company.getEmail()) != null)
+        {
+            erro.add("O Email inserido já está em uso");
+            request.setAttribute("mensagens", erro.getErros());
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/views/company/forms.jsp");
+            dispatcher.forward(request, response);
+            return;
+        }
 
-        String contextPath = request.getContextPath();
-        response.sendRedirect(contextPath + "/");
+        dao.insert(company);
+        response.sendRedirect("list");
+    }
+
+    private void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        request.setCharacterEncoding("UTF-8");
+
+        int id = Integer.parseInt(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String cnpj = request.getParameter("cnpj");
+        String city = request.getParameter("city");
+
+        RentalCompany company = new RentalCompany(id, name, email, password, cnpj, city);
+
+        dao.update(company);
+        response.sendRedirect("list");
+    }
+
+    private void remove(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+    {
+        int id = Integer.parseInt(request.getParameter("id"));
+
+        RentalCompany company = dao.getById(id);
+
+        dao.delete(company);
+
+        response.sendRedirect("list");
     }
 }

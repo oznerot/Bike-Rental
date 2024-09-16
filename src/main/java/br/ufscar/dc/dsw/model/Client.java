@@ -13,7 +13,7 @@ public class Client extends User
 
     public Client (String name, String email, String password, String cpf, String phone, String gender, LocalDate dateOfBirth)
     {
-        super(name, email, password, 1);
+        super(name, email, password, "CLIENT");
 
         this.cpf = cpf;
         this.phone = phone;
@@ -21,9 +21,9 @@ public class Client extends User
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Client (String uuid, String name, String email, String password, String cpf, String phone, String gender, LocalDate dateOfBirth)
+    public Client (int id, String name, String email, String password, String cpf, String phone, String gender, LocalDate dateOfBirth)
     {
-        super(uuid, name, email, password, 1);
+        super(id, name, email, password, "CLIENT");
 
         this.cpf = cpf;
         this.phone = phone;

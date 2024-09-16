@@ -2,110 +2,55 @@ package br.ufscar.dc.dsw.model;
 
 import java.time.LocalDateTime;
 
-import java.util.UUID;
-
 public class BikeRental
 {
-    private String rentalId;
-    private String clientId;
-    private String clientName;
-    private String clientEmail;
-    private String rentalCompanyId;
-    private String rentalCompanyName;
-    private String rentalCompanyEmail;
+    private int id;
+    private Client client;
+    private RentalCompany company;
 
     private LocalDateTime rentDateHour;
 
     public BikeRental() {}
 
-    public BikeRental(String clientId, String clientName, String clientEmail, String rentalCompanyId,
-                      String rentalCompanyName, String rentalCompanyEmail, LocalDateTime rentDateHour)
+    public BikeRental(Client client, RentalCompany company, LocalDateTime rentDateHour)
     {
-        this.rentalId = UUID.randomUUID().toString();       
-        this.clientId = clientId;
-        this.clientName = clientName;
-        this.clientEmail = clientEmail;
-        this.rentalCompanyId = rentalCompanyId;
-        this.rentalCompanyName = rentalCompanyName;
-        this.rentalCompanyEmail = rentalCompanyEmail;
+        this.id = -1;       
+        this.client = client;
+        this.company = company;
         this.rentDateHour = rentDateHour;
     }
 
-    public BikeRental(String rentalId, String clientId, String clientName, String clientEmail, String rentalCompanyId,
-                      String rentalCompanyName, String rentalCompanyEmail, LocalDateTime rentDateHour)
+    public BikeRental(int id, Client client, RentalCompany company, LocalDateTime rentDateHour)
     {
-        this.rentalId = rentalId;
-        this.clientId = clientId;
-        this.clientName = clientName;
-        this.clientEmail = clientEmail;
-        this.rentalCompanyId = rentalCompanyId;
-        this.rentalCompanyName = rentalCompanyName;
-        this.rentalCompanyEmail = rentalCompanyEmail;
+        this.id = id;
+        this.client = client;
+        this.company = company;
         this.rentDateHour = rentDateHour;
     }
 
-    public String getUUID()
+    public int getId()
     {
-        return rentalId;
-    }
-    public void setClientId(String clientId)
-    {
-        this.clientId = clientId;
+        return id;
     }
 
-    public String getClientId()
+    public void setClient(Client client)
     {
-        return clientId;
+        this.client = client;
     }
 
-    public void setClientName(String clientName)
+    public Client getClient()
     {
-        this.clientName = clientName;
+        return client;
     }
 
-    public String getClientName()
+    public void setCompany(RentalCompany company)
     {
-        return clientName;
+        this.company = company;
     }
 
-    public void setClientEmail(String clientEmail)
+    public RentalCompany getCompany()
     {
-        this.clientEmail = clientEmail;
-    }
-
-    public String getClientEmail()
-    {
-        return clientEmail;
-    }
-
-    public void setCompanyId(String rentalCompanyId)
-    {
-        this.rentalCompanyId = rentalCompanyId;
-    }
-
-    public String getCompanyId()
-    {
-        return rentalCompanyId;
-    }
-
-    public void setCompanyName(String rentalCompanyName)
-    {
-        this.rentalCompanyName = rentalCompanyName;
-    }
-
-    public String getCompanyName()
-    {
-        return rentalCompanyName;
-    }
-
-    public void setCompanyEmail(String rentalCompanyEmail)
-    {
-        this.rentalCompanyEmail = rentalCompanyEmail;
-    }
-
-    public String getCompanyEmail()
-    {
-        return rentalCompanyEmail;
+        return company;
     }
 
     public void setDateHour(LocalDateTime rentDateHour)
